@@ -36,7 +36,7 @@ function post(req, res) {
 			res.cookie('sid', session_id, {
 				signed: true,
 				httpOnly: true,
-				maxAge: 6000,
+				maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
 				sameSite: 'lax',
 			});
 			res.redirect(`/confessions/${user.id}`);

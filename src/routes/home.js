@@ -2,8 +2,7 @@ const { Layout } = require('../templates.js');
 const { getSession } = require('../model/session.js');
 
 function get(req, res) {
-	const session_id = req.signedCookies.sid;
-	const session = getSession(session_id);
+	const session = req.session;
 	const title = 'Confess your secrets!';
 	const content = /* html */ `
     <div class="Cover">

@@ -5,11 +5,28 @@ const signup = require('./routes/sign-up.js');
 const login = require('./routes/log-in.js');
 const logout = require('./routes/log-out.js');
 const confessions = require('./routes/confessions.js');
+const { getSession, removeSession } = require('./model/session.js');
 
 const body = express.urlencoded({ extended: false });
 const cookies = cookieParser(process.env.COOKIE_SECRET);
 
 const server = express();
+
+const sessionParser = (req, res, next) => {
+	const sid = req.signedCookies.sid;
+	const session = getSession(sid);
+	if (session) {
+		const expiry = new Date(session.expires_at);
+		const today = new Date();
+		if (expiry < today) {
+			removeSession(sid);
+			req.clearCookie('sid');
+		} else {
+			req.session = session;
+		}
+	}
+	next();
+};
 
 server.use((req, res, next) => {
 	const time = new Date().toLocaleTimeString('en-GB');
@@ -17,6 +34,7 @@ server.use((req, res, next) => {
 	next();
 });
 server.use(cookies);
+server.use(sessionParser);
 server.get('/', home.get);
 server.get('/sign-up', signup.get);
 server.post('/sign-up', body, signup.post);
