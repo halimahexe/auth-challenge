@@ -1,8 +1,9 @@
-const { Layout } = require("../templates.js");
+const { Layout } = require('../templates.js');
+const bcrypt = require('bcryptjs');
 
 function get(req, res) {
-  const title = "Create an account";
-  const content = /*html*/ `
+	const title = 'Create an account';
+	const content = /*html*/ `
     <div class="Cover">
       <h1>${title}</h1>
       <form method="POST" class="Row">
@@ -18,24 +19,27 @@ function get(req, res) {
       </form>
     </div>
   `;
-  const body = Layout({ title, content });
-  res.send(body);
+	const body = Layout({ title, content });
+	res.send(body);
 }
 
 function post(req, res) {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    res.status(400).send("Bad input");
-  } else {
-    res.send("to-do");
-    /**
-     * [1] Hash the password
-     * [2] Create the user in the DB
-     * [3] Create the session with the new user's ID
-     * [4] Set a cookie with the session ID
-     * [5] Redirect to the user's confession page (e.g. /confessions/3)
-     */
-  }
+	const { email, password } = req.body;
+	if (!email || !password) {
+		res.status(400).send('Bad input');
+	} else {
+		res.send('to-do');
+		bcrypt.hash(password, 12).then((hash) => {
+			console.log(hash);
+		});
+		/**
+		 * [1] Hash the password
+		 * [2] Create the user in the DB
+		 * [3] Create the session with the new user's ID
+		 * [4] Set a cookie with the session ID
+		 * [5] Redirect to the user's confession page (e.g. /confessions/3)
+		 */
+	}
 }
 
 module.exports = { get, post };
